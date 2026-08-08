@@ -1,0 +1,36 @@
+{
+  "name": "media-sdk-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Headless Media SDK ecosystem — framework-agnostic core, platform wrappers, and headless UI components",
+  "scripts": {
+    "dev": "pnpm --filter @media-sdk/web dev",
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm -r run typecheck",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "pnpm -r exec rm -rf dist node_modules"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.27.0",
+    "@types/node": "^22.15.0",
+    "eslint": "^9.27.0",
+    "globals": "^16.1.0",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.5.3",
+    "typedoc": "^0.28.20",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.0",
+    "vitest": "^3.2.1"
+  },
+  "packageManager": "pnpm@10.17.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "scheduler": "^0.27.0"
+  }
+}

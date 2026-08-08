@@ -68,3 +68,17 @@ This repository includes custom AI skills (located in `skills/`) to help AI assi
 
 - `wiring-data`: Rules for using `@media-sdk/media-react` to fetch data.
 - `using-components`: Rules for composing data with `@media-sdk/media-ui-react` prop-getters.
+
+## AI Assistance & Skills Usage
+
+As explicitly encouraged by the assignment constraints, this project was developed utilizing Agentic AI workflows. 
+
+### How AI was used:
+- **Architecture Enforcement**: The strict separation of concerns (Core -> React Data -> Headless UI -> Visual Composition) was strictly steered by human prompts to ensure the AI did not leak logic across boundaries.
+- **Code Generation & Refactoring**: AI was heavily utilized to generate boilerplate, implement the Pexels API fetching, and translate standard React components into Headless Hook patterns (`useMediaGrid`, `useMediaLightbox`).
+- **Visual Polish**: The heavy Framer Motion animations and glassmorphism styling in the web app were generated via AI iterators.
+
+### How SKILL docs were tested:
+The `SKILL.md` documents (located in `skills/`) were created to provide contextual boundaries for the AI. 
+- During the development of the final `apps/web` composition layer, the AI was explicitly pointed to the `wiring-data` and `using-components` skills. 
+- These documents successfully steered the AI to correctly extract data using Context/Providers and to map the prop-getters (`getGridProps`, `getItemProps`) into motion components without accidentally re-inventing the data fetching logic inside the UI layer.

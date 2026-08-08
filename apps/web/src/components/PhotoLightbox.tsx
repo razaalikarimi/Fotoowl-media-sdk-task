@@ -15,6 +15,8 @@ interface PhotoLightboxProps {
   onView?: (photo: Photo) => void;
 }
 
+import { motion, AnimatePresence } from 'framer-motion';
+
 export function PhotoLightbox({
   photos,
   initialIndex,
@@ -39,60 +41,86 @@ export function PhotoLightbox({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!lightbox.isOpen || !lightbox.currentItem) return null;
-
-  const photo = lightbox.currentItem;
-
   return (
-    <div {...lightbox.getOverlayProps()} className="lightbox-overlay">
-      <div {...lightbox.getContentProps()} className="lightbox-content">
-        <div className="lightbox-header">
-          <div className="lightbox-info">
-            <span className="lightbox-photographer">{photo.photographer}</span>
-            <span className="lightbox-counter">
-              {lightbox.currentIndex + 1} / {photos.length}
-            </span>
-          </div>
-          <div className="lightbox-actions">
-            <button
-              {...lightbox.getDownloadButtonProps()}
-              className="lightbox-btn"
-              title="Download"
-            >
-              ↓
-            </button>
-            <button
-              {...lightbox.getCloseButtonProps()}
-              className="lightbox-btn lightbox-btn--close"
-              title="Close"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-
-        <div className="lightbox-image-container">
-          <button
-            {...lightbox.getPrevButtonProps()}
-            className="lightbox-nav lightbox-nav--prev"
+    <AnimatePresence>
+      {lightbox.isOpen && lightbox.currentItem && (
+        <motion.div
+          {...lightbox.getOverlayProps()}
+          className="lightbox-overlay"
+          initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+          animate={{ opacity: 1, backdropFilter: 'blur(8px)' }}
+          exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.div
+            {...lightbox.getContentProps()}
+            className="lightbox-content"
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           >
-            ‹
-          </button>
+            <div className="lightbox-header">
+              <div className="lightbox-info">
+                <span className="lightbox-photographer">{lightbox.currentItem.photographer}</span>
+                <span className="lightbox-counter">
+                  {lightbox.currentIndex + 1} / {photos.length}
+                </span>
+              </div>
+              <div className="lightbox-actions">
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  {...lightbox.getDownloadButtonProps()}
+                  className="lightbox-btn"
+                  title="Download"
+                >
+                  ↓
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  {...lightbox.getCloseButtonProps()}
+                  className="lightbox-btn lightbox-btn--close"
+                  title="Close"
+                >
+                  ✕
+                </motion.button>
+              </div>
+            </div>
 
-          <img
-            src={photo.src.large2x}
-            alt={photo.alt || `Photo by ${photo.photographer}`}
-            className="lightbox-image"
-          />
+            <div className="lightbox-image-container">
+              <motion.button
+                whileHover={{ scale: 1.1, x: -5 }}
+                whileTap={{ scale: 0.9 }}
+                {...lightbox.getPrevButtonProps()}
+                className="lightbox-nav lightbox-nav--prev"
+              >
+                ‹
+              </motion.button>
 
-          <button
-            {...lightbox.getNextButtonProps()}
-            className="lightbox-nav lightbox-nav--next"
-          >
-            ›
-          </button>
-        </div>
-      </div>
-    </div>
+              <motion.img
+                key={`img-${lightbox.currentItem.id}`}
+                src={lightbox.currentItem.src.large2x}
+                alt={lightbox.currentItem.alt || `Photo by ${lightbox.currentItem.photographer}`}
+                className="lightbox-image"
+                initial={{ opacity: 0, filter: 'blur(10px)', scale: 0.95 }}
+                animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
+                transition={{ duration: 0.3 }}
+              />
+
+              <motion.button
+                whileHover={{ scale: 1.1, x: 5 }}
+                whileTap={{ scale: 0.9 }}
+                {...lightbox.getNextButtonProps()}
+                className="lightbox-nav lightbox-nav--next"
+              >
+                ›
+              </motion.button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

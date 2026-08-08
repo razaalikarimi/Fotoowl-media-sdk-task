@@ -13,6 +13,8 @@
     "@media-sdk/media-core": "workspace:*",
     "@media-sdk/media-react": "workspace:*",
     "@media-sdk/media-ui-react": "workspace:*",
+    "framer-motion": "^10.18.0",
+    "lucide-react": "^1.30.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

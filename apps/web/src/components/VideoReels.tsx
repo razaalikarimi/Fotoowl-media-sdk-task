@@ -6,6 +6,7 @@
 import { useEffect, useRef } from 'react';
 import type { Video } from '@media-sdk/media-core';
 import { useMediaReel } from '@media-sdk/media-ui-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface VideoReelsProps {
   videos: readonly Video[];
@@ -41,42 +42,64 @@ export function VideoReels({ videos, onClose, onView }: VideoReelsProps) {
   }, []);
 
   return (
-    <div className="reels-overlay">
+    <motion.div
+      className="reels-overlay"
+      initial={{ opacity: 0, y: '100%' }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: '100%' }}
+      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+    >
       <div className="reels-header">
         <h2>Video Reels</h2>
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1, rotate: 90 }}
+          whileTap={{ scale: 0.9 }}
           className="reels-close-btn"
           onClick={onClose}
           aria-label="Close reels"
           type="button"
         >
           ✕
-        </button>
+        </motion.button>
       </div>
 
       <div
         {...reel.getReelContainerProps()}
         className="reels-container"
       >
-        {videos.map((video, index) => (
-          <div
-            {...reel.getReelItemProps(video, index)}
-            className="reel-item"
-          >
-            <ReelVideo
-              video={video}
-              isActive={index === reel.activeIndex}
-            />
-            <div className="reel-info">
-              <span className="reel-author">{video.user.name}</span>
-              <span className="reel-duration">
-                {Math.floor(video.duration / 60)}:{(video.duration % 60).toString().padStart(2, '0')}
-              </span>
+        {videos.map((video, index) => {
+          const { key, ...itemProps } = reel.getReelItemProps(video, index);
+          return (
+            <div
+              key={key}
+              {...itemProps}
+              className="reel-item"
+            >
+              <ReelVideo
+                video={video}
+                isActive={index === reel.activeIndex}
+              />
+              <AnimatePresence>
+                {index === reel.activeIndex && (
+                  <motion.div
+                    className="reel-info"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <span className="reel-author">{video.user.name}</span>
+                    <span className="reel-duration">
+                      {Math.floor(video.duration / 60)}:{(video.duration % 60).toString().padStart(2, '0')}
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -100,7 +123,6 @@ function ReelVideo({ video, isActive }: { video: Video; isActive: boolean }) {
     }
   }, [isActive]);
 
-  // Find the best quality video file (prefer HD)
   const videoFile =
     video.videoFiles.find((f) => f.quality === 'hd') ??
     video.videoFiles.find((f) => f.quality === 'sd') ??
@@ -109,7 +131,7 @@ function ReelVideo({ video, isActive }: { video: Video; isActive: boolean }) {
   if (!videoFile) return null;
 
   return (
-    <video
+    <motion.video
       ref={videoRef}
       className="reel-video"
       src={videoFile.link}
@@ -118,6 +140,9 @@ function ReelVideo({ video, isActive }: { video: Video; isActive: boolean }) {
       playsInline
       poster={video.image}
       aria-label={`Video by ${video.user.name}`}
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: isActive ? 1 : 0.9, opacity: isActive ? 1 : 0.5 }}
+      transition={{ duration: 0.4 }}
     />
   );
 }
